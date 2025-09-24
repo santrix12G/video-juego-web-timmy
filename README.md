@@ -1,16 +1,28 @@
-# React + Vite
+# Video Juego Web Timmy
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Videojuego enfocado en la web para la enseñanza de física de los temas de Equilibrio estático, torque, centro de masa y propiedades elásticas de los sólidos.
 
-Currently, two official plugins are available:
+## Tecnologías Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React + Vite**: Framework de desarrollo web moderno
+- **Phaser 3**: Motor de juegos 2D para JavaScript
+- **TypeScript**: Para tipado estático y mejor desarrollo
+- **Rex UI Plugin**: Para interfaces de usuario en Phaser
 
-## React Compiler
+## Estructura del Proyecto
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `src/Game/`: Contiene la lógica del juego con Phaser
+- `src/Components/`: Componentes de React para integrar el juego
+- `public/assets/`: Recursos del juego (imágenes, sonidos)
 
-## Expanding the ESLint configuration
+## Instalación
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+## Niveles del Juego
+
+1. **Escena Cocina**: Reparación de tuberías - Enseña conceptos de torque
+2. **Escenario Perchera**: Próximamente - Centro de masa y equilibrio
