@@ -1,0 +1,5 @@
+.videojuego{
+  display: flex;
+  align-self: center;
+  justify-self: center;
+}
