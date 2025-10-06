@@ -9,7 +9,7 @@ const config: Phaser.Types.Core.GameConfig = {
     height: 600,
     backgroundColor: '#1d1d1d',
     parent: 'phaser-container',
-    scene: [EscenaCocina],
+    scene: [EscenarioPerchera,EscenaCocina],
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH

@@ -37,6 +37,8 @@ export default class EscenaCocina extends Phaser.Scene {
     }
 
     create() {
+        this.scene.launch('EscenarioPerchera');
+        this.scene.bringToTop('EscenaCocina');
         // Fondo centrado
         this.add.image(400, 300, 'fondo').setOrigin(0.5, 0.5);
         const bg = this.add.image(0, 0, 'fondo').setOrigin(0);
@@ -74,6 +76,14 @@ export default class EscenaCocina extends Phaser.Scene {
 
         // Herramientas (simplemente colocadas en la parte inferior)
         let llaveInglesa = this.add.image(250, 500, 'wrench');
+        let zonaInteractiva = new Phaser.Geom.Rectangle(
+            10,
+            20,
+            1100,
+            1100
+        );
+
+        llaveInglesa.setInteractive(zonaInteractiva, Phaser.Geom.Rectangle.Contains);
         llaveInglesa.setScale(0.05);
         llaveInglesa.setInteractive();
         this.agarrarLlaveInglesa(llaveInglesa);
@@ -108,7 +118,7 @@ export default class EscenaCocina extends Phaser.Scene {
         this.input.setDraggable(llave);
 
 
-        //Posicion inicial
+        //Posicion inicial si no se alcanza la zona indicada
         const startX = 250;
         const startY = 500;
         this.input.on("drag", (pointer, obj, dragX, dragY) => {
@@ -126,21 +136,21 @@ export default class EscenaCocina extends Phaser.Scene {
 
 
         //zona objetivo
-        const zonaLlave = this.add.zone(400, 320, 60, 60).setRectangleDropZone(50, 50);
+        let zonaLlave = this.add.zone(400, 320, 60, 60).setRectangleDropZone(50, 50);
 
-        this.physics.add.existing(zonaLlave, true); // true = objeto estático
-        this.physics.add.existing(llave);
+        // this.physics.add.existing(zonaLlave, true); // true = objeto estático
+        // this.physics.add.existing(llave);
 
         this.input.enableDebug(zonaLlave, 0x00ff00);
         this.input.enableDebug(llave, 0xff0000);
 
-        //overlap de la llave con la zona de la llave
-        this.physics.add.overlap(llave, zonaLlave, () => {
-            console.log("✅ Llave colocada correctamente en la tubería");
-            llave.setTint(0xff0000);
-            llave.disableInteractive();
-            this.cuadroTextoPregunta();
-        });
+        // //overlap de la llave con la zona de la llave
+        // this.physics.add.overlap(llave, zonaLlave, () => {
+        //     console.log("✅ Llave colocada correctamente en la tubería");
+        //     llave.setTint(0xff0000);
+        //     llave.disableInteractive();
+        //     this.cuadroTextoPregunta();
+        // });
 
 
 
@@ -153,8 +163,6 @@ export default class EscenaCocina extends Phaser.Scene {
         //         llave.input.hitArea.height
         //     );
         // }
-
-        
 
 
         // this.input.on("drop", (pointer, obj, dropZone) => {
@@ -173,9 +181,24 @@ export default class EscenaCocina extends Phaser.Scene {
         //     }
         // });
 
+        //otra forma de hacer el drop
+        this.input.on("dragend", (pointer, obj) => {
+            if (obj === llave) {
+                const boundsLlave = llave.getBounds();
+                const boundsZona = zonaLlave.getBounds();
+
+                if (Phaser.Geom.Intersects.RectangleToRectangle(boundsLlave, boundsZona)) {
+                    console.log("✅ Llave colocada correctamente en la tubería");
+                    llave.setTint(0xff0000);
+                    //llave.disableInteractive();
+                    this.cuadroTextoPregunta(llave);
+                }
+            }
+        });
+
     }
 
-    cuadroTextoPregunta() {
+    cuadroTextoPregunta(llave) {
 
         // Crear cuadro de diálogo
         // Crear cuadro de diálogo
@@ -275,6 +298,16 @@ export default class EscenaCocina extends Phaser.Scene {
                     space: { left: 10, right: 10, top: 10, bottom: 10 }
                 }).setInteractive().on('pointerdown', () => {
                     alert("Pista: Torque = Fuerza × Distancia 😉");
+                }),
+                this.rexUI.add.label(
+                    {
+                        background: this.rexUI.add.roundRectangle(0, 0, 40, 30, 10, 0xff0000),
+                        text: this.add.text(0, 0, 'X', { fontSize: '18px', color: '#000000' }),
+                        space: { left: 10, right: 10, top: 10, bottom: 10 }
+                    }
+                ).setInteractive().on('pointerdown', () => {
+                    dialog.destroy();
+                    this.posicionInicialLlave(llave);
                 })
             ],
 
@@ -292,5 +325,15 @@ export default class EscenaCocina extends Phaser.Scene {
             .layout()
             .popUp(500);
 
+    }
+
+    posicionInicialLlave(llave) {
+        llave.setInteractive();
+        llave.clearTint();
+        this.input.setDraggable(llave);
+        const startX = 250;
+        const startY = 500;
+        llave.x = startX;
+        llave.y = startY;
     }
 }

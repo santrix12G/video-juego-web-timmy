@@ -25,10 +25,10 @@ export default class EscenarioPerchera extends Phaser.Scene {
         // defenir el fondo
         this.add.image(400, 300, 'fondo').setOrigin(0.5, 0.1);
         const bg = this.add.image(0, 0, 'fondo').setOrigin(0);
-        
+
         const w = this.sys.game.config.width as number;
         const h = this.sys.game.config.height as number;
-        
+
         const scaleX = w / bg.width;
         const scaleY = h / bg.height;
         const scale = Math.max(scaleX, scaleY);
@@ -41,23 +41,23 @@ export default class EscenarioPerchera extends Phaser.Scene {
         //definicion de percheras
         let perchera = this.add.image(400, 150, 'perchera');
         perchera.setScale(0.25);
-        
-        
-        
+
+
+
         ///
         // --- Asegúrate en preload() de tener:
         // this.load.image('bolsa', 'assets/bolsa.png');
-        
+
         // Crear container en la posición deseada (coordenada del mundo)
         let bolsaConNumero = this.add.container(255, 123);
         let bolsaConNumero2 = this.add.container(402, 123);
         let bolsaConNumero3 = this.add.container(100, 410);
-        
+
         // Crear la imagen **en el origen del contenedor** (0,0)
         let bolsaSprite = this.add.image(0, 0, 'bolsa').setOrigin(0.5);
         let bolsaSprite2 = this.add.image(0, 0, 'bolsa').setOrigin(0.5);
         let bolsaSprite3 = this.add.image(0, 0, 'bolsa').setOrigin(0.5);
-        
+
         // Ajusta la escala a un valor visible (prueba 0.25, 0.4, etc.)
         bolsaSprite.setScale(0.1);
         bolsaSprite2.setScale(0.1);
@@ -65,7 +65,7 @@ export default class EscenarioPerchera extends Phaser.Scene {
 
         // Calcula un tamaño de fuente proporcional al ancho de la bolsa
         let fontSize = Math.max(12, Math.round(bolsaSprite.displayWidth * 0.45));
-        
+
         // Crea el texto (sin fondo) y céntralo
         let textoBolsa1 = this.add.text(0, 40, '30kg', {
             fontFamily: 'Arial',
@@ -74,7 +74,7 @@ export default class EscenarioPerchera extends Phaser.Scene {
             fontStyle: 'bold',
             // backgroundColor: '#ffffff77' // <-- opcional: NO usar si tapa la bolsa
         }).setOrigin(0.5);
-        
+
         let textoBolsa2 = this.add.text(0, 40, '10kg', {
             fontFamily: 'Arial',
             fontSize: `20px`,
@@ -82,7 +82,7 @@ export default class EscenarioPerchera extends Phaser.Scene {
             fontStyle: 'bold',
             // backgroundColor: '#ffffff77' // <-- opcional: NO usar si tapa la bolsa
         }).setOrigin(0.5);
-        
+
         let textoBolsa3 = this.add.text(0, 40, "", {
             fontFamily: 'Arial',
             fontSize: `20px`,
@@ -94,9 +94,9 @@ export default class EscenarioPerchera extends Phaser.Scene {
         bolsaConNumero.add([bolsaSprite, textoBolsa1]);
         bolsaConNumero2.add([bolsaSprite2, textoBolsa2]);
         bolsaConNumero3.add([bolsaSprite3, textoBolsa3]);
-        
 
-        
+
+
         let ancho = bolsaSprite.displayWidth;
         let alto = bolsaSprite.displayHeight;
 
@@ -120,27 +120,37 @@ export default class EscenarioPerchera extends Phaser.Scene {
         ), Phaser.Geom.Rectangle.Contains);
 
         this.input.setDraggable(bolsaConNumero3);
-        
+
         this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
-            gameObject.x = dragX;
-            gameObject.y = dragY;
-            bolsaSprite3.setTint(0x00ff00);
+            if (gameObject == bolsaConNumero3) {
+                gameObject.x = dragX;
+                gameObject.y = dragY;
+                bolsaSprite3.setTint(0x00ff00);
+            }
         });
-        
+
         this.input.on("dragend", (pointer, gameObject, dropped) => {
             if (!dropped) {
-                bolsaSprite3.clearTint();
+                if (gameObject == bolsaConNumero3)
+                    bolsaSprite3.clearTint();
                 // Si NO se soltó en la zona, vuelve a su lugar inicial
                 // obj.x = startX;
                 // obj.y = startY;
             }
         });
-        
+        bolsaConNumero3.on("pointerup", () => {
+            // console.log("¡Llave inglesa seleccionada!");
+            const contenido = Array.isArray(textoBolsa3.text) ? textoBolsa3.text.join('') : textoBolsa3.text;
+            const estaVacio = contenido.trim() === '';
+            if(estaVacio){
+                this.cuadroTextoPregunta(textoBolsa3);
+            }
+        });
+
         // Primero calcula un área base según la bolsa
 
 
 
-        this.cuadroTextoPregunta(textoBolsa3);
         this.input.enableDebug(bolsaConNumero3, 0xff0000);
 
     }
@@ -177,7 +187,7 @@ export default class EscenarioPerchera extends Phaser.Scene {
 
     cuadroTextoPregunta(textBolsa) {
 
-        
+
 
         //cierra todo los clicks hasta que se resuelva el cuadro de dialogo
         let blocker = this.add.rectangle(0, 0, Number(this.sys.game.config.width), Number(this.sys.game.config.height), 0x000000, 0.5)
@@ -257,7 +267,7 @@ export default class EscenarioPerchera extends Phaser.Scene {
                 }).setInteractive().on('pointerdown', () => {
                     const description = dialog.getElement('description') as any;
                     const textValue = description?.getElement ? description.getElement('text')?.text : '';
-                    textBolsa.setText(textValue+ "kg");
+                    textBolsa.setText(textValue + "kg");
                     blocker.destroy();
                     dialog.destroy();
                 }),
@@ -268,6 +278,16 @@ export default class EscenarioPerchera extends Phaser.Scene {
                     space: { left: 10, right: 10, top: 10, bottom: 10 }
                 }).setInteractive().on('pointerdown', () => {
                     alert("Pista: Torque = Fuerza × Distancia 😉");
+                }),
+                this.rexUI.add.label(
+                    {
+                        background: this.rexUI.add.roundRectangle(0, 0, 40, 30, 10, 0xff0000),
+                        text: this.add.text(0, 0, 'X', { fontSize: '18px', color: '#000000' }),
+                        space: { left: 10, right: 10, top: 10, bottom: 10 }
+                    }
+                ).setInteractive().on('pointerup', () => {
+                    dialog.destroy();
+                    blocker.destroy();
                 })
             ],
 
