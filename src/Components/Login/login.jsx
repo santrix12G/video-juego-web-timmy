@@ -2,7 +2,7 @@ import { useState } from "react";
 import './login.css'
 import { Link } from "react-router-dom";
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -11,6 +11,10 @@ const Login = () => {
     e.preventDefault();
     console.log({ email, password, remember });
     // Aquí va tu lógica de login
+    // Por ahora, simular login exitoso
+    if (onLoginSuccess) {
+      onLoginSuccess();
+    }
   };
 
   return (
